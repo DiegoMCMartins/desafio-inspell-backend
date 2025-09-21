@@ -6,5 +6,6 @@ import { PeriodRepository } from './entities/period.entity';
 @Module({
   controllers: [PeriodsController],
   providers: [PeriodsService, PeriodRepository],
+  exports: [PeriodsService],
 })
 export class PeriodsModule {}

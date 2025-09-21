@@ -36,7 +36,7 @@ export const calculateSecondsBetweenPeriods = (params: {
 };
 
 export const formatSecondsToHHMMSS = (secondsToTransform: number) => {
-  const hour = Math.floor((secondsToTransform / 60 / 60) % 24)
+  const hour = Math.floor(secondsToTransform / 60 / 60)
     .toString()
     .padStart(2, '0');
   const minutes = Math.floor((secondsToTransform / 60) % 60)
@@ -44,5 +44,5 @@ export const formatSecondsToHHMMSS = (secondsToTransform: number) => {
     .padStart(2, '0');
   const seconds = (secondsToTransform % 60).toString().padStart(2, '0');
 
-  return `${hour}:${minutes}:${seconds}`;
+  return `${hour}h ${minutes}m ${seconds}s`;
 };
