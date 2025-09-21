@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import { DateTime, Interval } from 'luxon';
 
 export const calculateSecondsBetweenPeriods = (params: {
   initialPeriod: string;
@@ -22,16 +22,61 @@ export const calculateSecondsBetweenPeriods = (params: {
     };
   }
 
-  /**
-   * @todo Adicionar regra
-   * Regra adicional, no intervalo entre 22h e 5h a contagem de tempo deve ser diferenciada, deve se contar 1h a cada 52 min e 30 segundo, de tal forma que esse período de 7 horas, entre nos cálculos como 8h.
-   */
+  /** Transformar o calculo de 7 horas para 8 horas no periodo */
+  const nightMultiplier = 8 / 7;
 
-  const totalDiff = finalDateTime.diff(initialDateTime, 'seconds');
+  /** Intervalo principal informado */
+  const mainInterval = Interval.fromDateTimes(initialDateTime, finalDateTime);
+  let totalNightSeconds = 0;
+
+  /** Cursor para iteração entre o periodo informado */
+  let cursor = initialDateTime.startOf('day');
+
+  while (cursor < finalDateTime) {
+    /** Marca o inicio do periodo noturno */
+    const nightStartDateTime = cursor.set({ hour: 22 });
+
+    /** Marca o final do periodo noturno */
+    const nightFinalDateTime = cursor.plus({ day: 1 }).set({ hour: 5 });
+
+    /** Cria  o intervalo do periodo noturno */
+    const nightInterval = Interval.fromDateTimes(
+      nightStartDateTime,
+      nightFinalDateTime,
+    );
+
+    /**
+     * Se o intervalo principal possui interseção com o periodo noturno
+     * Caso haja a interseção, é calculado o total de segundos desse periodo
+     */
+    if (mainInterval.overlaps(nightInterval)) {
+      const intervalsIntersection = mainInterval.intersection(nightInterval);
+
+      if (intervalsIntersection) {
+        totalNightSeconds +=
+          intervalsIntersection.toDuration('seconds').seconds;
+      }
+    }
+
+    /** Passa para outro dia do periodo informado */
+    cursor = cursor.plus({ day: 1 });
+  }
+
+  /** Segundos totais do periodo informado */
+  const mainTotalSeconds = mainInterval.toDuration('seconds').seconds;
+
+  /** Segundos totais do periodo diurno */
+  const dayTotalSeconds = mainTotalSeconds - totalNightSeconds;
+
+  /** Segundos totais normalizados do periodo noturno */
+  const normalizedNightTotalSeconds = totalNightSeconds * nightMultiplier;
+
+  /** Segundo totais reais, periodo diurno + periodo noturno */
+  const totalSeconds = dayTotalSeconds + normalizedNightTotalSeconds;
 
   return {
     isValid: true,
-    total: totalDiff.seconds,
+    total: totalSeconds,
   };
 };
 
@@ -42,7 +87,9 @@ export const formatSecondsToHHMMSS = (secondsToTransform: number) => {
   const minutes = Math.floor((secondsToTransform / 60) % 60)
     .toString()
     .padStart(2, '0');
-  const seconds = (secondsToTransform % 60).toString().padStart(2, '0');
+  const seconds = Math.floor(secondsToTransform % 60)
+    .toString()
+    .padStart(2, '0');
 
   return `${hour}h ${minutes}m ${seconds}s`;
 };
