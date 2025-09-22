@@ -60,7 +60,11 @@
   - Deve retornar uma resposta de sucesso sem corpo.
 
 ## Como iniciar
-1. Instale as dependências rodando
+1. Clone o projeto
+```bash
+git clone https://github.com/DiegoMCMartins/desafio-inspell-backend.git
+```
+2. Instale as dependências rodando
 ```bash
 #npm (preferência)
 npm i
@@ -68,7 +72,7 @@ npm i
 #yarn
 yarn
 ```
-2. Execute o projeto
+3. Execute o projeto
 ```bash
 #npm (preferência)
 npm run start:dev
@@ -76,4 +80,4 @@ npm run start:dev
 #yarn
 yarn start:dev
 ```
-3. Acesse o projeto em [`http://localhost:3333/api`](`http://localhost:3333/api`)
+4. Acesse o projeto em [`http://localhost:3333/api`](`http://localhost:3333/api`)
