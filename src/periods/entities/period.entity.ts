@@ -27,7 +27,11 @@ export class PeriodRepository {
           DateTime.fromISO(payload.finalPeriod),
         );
 
-        console.log(savedInterval, newInterval, newInterval.intersection(savedInterval));
+        console.log(
+          savedInterval,
+          newInterval,
+          newInterval.intersection(savedInterval),
+        );
 
         return newInterval.intersection(savedInterval);
 

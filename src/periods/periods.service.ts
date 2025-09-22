@@ -23,7 +23,7 @@ export class PeriodsService {
         finalPeriod: registerPeriodDto.dataFinal,
       });
     } catch (error) {
-      throw new BadRequestException(error?.message);
+      throw new BadRequestException((error as Error)?.message);
     }
 
     return {
